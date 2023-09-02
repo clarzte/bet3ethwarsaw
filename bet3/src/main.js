@@ -3,8 +3,11 @@ import App from "./App.vue";
 import "./registerServiceWorker";
 import router from "./router";
 import store from "./store";
+import LottieVuePlayer from "@lottiefiles/vue-lottie-player";
 
 Vue.config.productionTip = false;
+
+Vue.use(LottieVuePlayer);
 
 new Vue({
   router,

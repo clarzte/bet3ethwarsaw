@@ -2,6 +2,16 @@
   <div id="bet-created-view">
     <the-header> Bet Created </the-header>
     <div class="content">
+      <lottie-vue-player
+        :src="`https://lottie.host/d0ca9303-deca-41b2-8611-f3fdb8558a79/Cu3VIVd8up.json`"
+        :player-controls="false"
+        autoplay
+        backgroundColor="transparent"
+        player-size="hide"
+        minimizable
+        style="width: 100%; height: 400px"
+      >
+      </lottie-vue-player>
       <div class="congrats">
         Congrats! You’ve just created <br />
         your bet
@@ -51,6 +61,8 @@ export default {
   .content {
     align-self: center;
     padding: 0 16px;
+    position: relative;
+    top: 100px;
 
     .congrats {
       font-size: 20px;
@@ -101,5 +113,16 @@ export default {
       }
     }
   }
+}
+</style>
+
+<style>
+.vue-lottie-player {
+  background: transparent;
+  position: absolute;
+  height: 400px !important;
+  left: 0;
+  top: -150px;
+  pointer-events: none;
 }
 </style>
