@@ -24,6 +24,11 @@ const routes = [
     name: "dashboard",
     component: () => import("../views/DashboardView.vue"),
   },
+  {
+    path: "/create-bet",
+    name: "create-bet",
+    component: () => import("../views/CreateBetView.vue"),
+  },
 ];
 
 const router = new VueRouter({

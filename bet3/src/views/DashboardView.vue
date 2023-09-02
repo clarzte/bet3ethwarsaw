@@ -6,7 +6,9 @@
     </div>
     <div class="content">
       <div class="text">You haven’t participate in any bet yet.</div>
-      <BaseBtn class="bet-btn">Create a Bet</BaseBtn>
+      <BaseBtn class="bet-btn" @click="$router.push('/create-bet')">
+        Create a Bet
+      </BaseBtn>
     </div>
     <div class="footer">
       <div
@@ -18,7 +20,9 @@
         <span>Home</span>
       </div>
       <div class="float-bet-btn-container">
-        <BaseBtn class="float-bet-btn">+</BaseBtn>
+        <BaseBtn class="float-bet-btn" @click="$router.push('/create-bet')">
+          +
+        </BaseBtn>
         <span>Create a Bet</span>
       </div>
       <div
