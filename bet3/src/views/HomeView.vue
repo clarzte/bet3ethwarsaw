@@ -23,13 +23,32 @@ import {
 } from "@web3modal/ethereum";
 import { Web3Modal } from "@web3modal/html";
 import { configureChains, createConfig, getAccount } from "@wagmi/core";
-import { mantleTestnet } from "@wagmi/core/chains";
+// import { mantleTestnet } from "@wagmi/core/chains";
 
 export default {
   name: "HomeView",
   components: { BaseBtn },
   mounted() {
-    const chains = [mantleTestnet];
+    const buildBear = {
+      id: 10968,
+      name: "BuildBear Testnet",
+      network: "buildbear",
+      nativeCurrency: {
+        decimals: 18,
+        name: "BB ETH",
+        symbol: "BB ETH",
+      },
+      rpcUrls: {
+        default: {
+          http: ["https://rpc.buildbear.io/aesthetic-greedo-a52d4b3a"],
+        },
+        public: {
+          http: ["https://rpc.buildbear.io/aesthetic-greedo-a52d4b3a"],
+        },
+      },
+      testnet: true,
+    };
+    const chains = [buildBear];
     const projectId = "745309525617c3053ad47f1817bef8a1";
     const { publicClient } = configureChains(chains, [
       w3mProvider({ projectId }),
@@ -54,6 +73,7 @@ export default {
       if (!address) {
         return;
       }
+      console.log("Address: ", address);
       if (this.$route.path !== "/dashboard") {
         this.$router.push("/dashboard");
       }

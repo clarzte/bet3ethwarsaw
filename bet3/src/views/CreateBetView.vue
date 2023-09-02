@@ -87,6 +87,9 @@
 import BaseBtn from "@/components/BaseBtn.vue";
 import TheHeader from "@/components/TheHeader.vue";
 import BetName from "@/components/BetName.vue";
+import { writeContract } from "@wagmi/core";
+import { readContract } from "@wagmi/core";
+import bet3 from "@/abi/bet3.json";
 
 export default {
   name: "CreateBetView",
@@ -122,9 +125,26 @@ export default {
         name: "",
       });
     },
-    createBet() {
+    async writeContract() {
+      const { hash } = await writeContract({
+        abi: bet3,
+        address: "0x3e75f922937F4DBD8c2dfBBC0B14e322391C6f11",
+        functionName: "autoFinalizePeriod",
+      });
+      console.log("Hash: ", hash);
+    },
+    async readContract() {
+      const data = await readContract({
+        address: "0x3e75f922937F4DBD8c2dfBBC0B14e322391C6f11",
+        abi: bet3,
+        functionName: "autoFinalizePeriod",
+      });
+      console.log("Data: ", data);
+    },
+    async createBet() {
       this.$store.commit("SET_BET", this.bet);
-      this.$router.push("/bet-created");
+      await this.writeContract();
+      await this.$router.push("/bet-created");
     },
   },
 };
