@@ -19,25 +19,49 @@
           v-model="betName"
         />
       </div>
+      <div class="bet-options">
+        <div class="label">Bet Options</div>
+        <div v-for="(option, index) in betOptions" :key="index">
+          <div class="bet-option-input-container">
+            <input
+              class="bet-option-input"
+              v-model="option.name"
+              :placeholder="`Option ${index + 1}`"
+            />
+          </div>
+        </div>
+        <BaseBtn class="add-bet-option-btn" @click="addBetOption">
+          <span>Add bet option</span>
+        </BaseBtn>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
 import InlineSvg from "vue-inline-svg";
+import BaseBtn from "@/components/BaseBtn.vue";
 
 export default {
   name: "CreateBetView",
   components: {
+    BaseBtn,
     InlineSvg,
   },
   data() {
     return {
       back: require("../assets/arrow-left.svg"),
       betName: "",
+      betOptions: [],
     };
   },
-  methods: {},
+  methods: {
+    addBetOption() {
+      this.betOptions.push({
+        name: "",
+      });
+    },
+  },
   mounted() {},
 };
 </script>
@@ -107,6 +131,51 @@ export default {
         left: 70px;
         height: 24px;
         outline: none;
+      }
+    }
+
+    .bet-options {
+      margin-top: 16px;
+
+      .label {
+        color: white;
+        font-size: 10px;
+        font-style: normal;
+        font-weight: 600;
+        line-height: normal;
+        letter-spacing: -0.2px;
+        text-align: left;
+        text-transform: uppercase;
+      }
+
+      .bet-option-input-container {
+        background: #4b5565;
+        border: 1px solid #364152;
+        border-radius: 16px;
+        display: flex;
+        padding: 5px;
+        position: relative;
+        margin-top: 8px;
+
+        .bet-option-input {
+          background: transparent;
+          border: none;
+          color: white;
+          height: 24px;
+          outline: none;
+          text-align: center;
+          width: 100%;
+        }
+      }
+
+      .add-bet-option-btn {
+        border: 1px solid #4b5565;
+        border-radius: 99px;
+        background: transparent;
+        color: white;
+        margin-top: 12px;
+        padding: 9px 32px;
+        width: 100%;
       }
     }
   }
