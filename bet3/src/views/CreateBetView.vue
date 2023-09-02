@@ -1,28 +1,12 @@
 <template>
   <div id="create-bet-view">
-    <div class="header">
-      <div class="back">
-        <inline-svg :src="back" @click="$router.go(-1)" />
-      </div>
-      <div class="title">Create new Bet</div>
-    </div>
+    <the-header> Create new Bet </the-header>
     <div class="content">
-      <div class="bet-name-input">
-        <div class="img-logo-container">
-          <img alt="missing.png" class="img-logo" src="@/assets/ball.png" />
-        </div>
-        <span class="label">Bet Name</span>
-        <input
-          type="text"
-          class="input"
-          placeholder="Add your bet name"
-          v-model="betName"
-        />
-      </div>
+      <bet-name @setBetName="bet.name = $event" />
       <hr />
       <div class="bet-options">
         <div class="label">Bet Options</div>
-        <template v-for="(option, index) in betOptions">
+        <template v-for="(option, index) in bet.options">
           <div class="bet-option-input-container" :key="index">
             <input
               class="bet-option-input"
@@ -32,7 +16,7 @@
           </div>
         </template>
         <BaseBtn
-          v-if="betOptions.length < 2"
+          v-if="bet.options.length < 2"
           class="add-bet-option-btn"
           @click="addBetOption"
         >
@@ -46,15 +30,15 @@
           <div class="type-of-bet">
             <div
               class="fixed-bet"
-              :class="{ active: typeOfBet === 'fixed' }"
-              @click="typeOfBet = 'fixed'"
+              :class="{ active: bet.type === 'fixed' }"
+              @click="bet.type = 'fixed'"
             >
               <span>Fixed</span>
             </div>
             <div
               class="open-bet"
-              :class="{ active: typeOfBet === 'open' }"
-              @click="typeOfBet = 'open'"
+              :class="{ active: bet.type === 'open' }"
+              @click="bet.type = 'open'"
             >
               <span>Open</span>
             </div>
@@ -65,7 +49,7 @@
             class="bet-amount-input"
             placeholder="ENTER BET AMOUNT"
             type="number"
-            v-model="betAmount"
+            v-model="bet.amount"
           />
           <span class="currency"> MNT </span>
         </div>
@@ -74,7 +58,7 @@
       <div class="bet-time-container">
         <div class="label">Time for betting</div>
         <div class="bet-time-input-container">
-          <input class="bet-time-input" type="number" v-model="betTime" />
+          <input class="bet-time-input" type="number" v-model="bet.time" />
           <span class="time"> mins </span>
         </div>
       </div>
@@ -91,47 +75,56 @@
         :disabled="!canCreateBet"
         :class="{ disabled: !canCreateBet }"
         class="create-bet-btn"
-        >Create Bet</BaseBtn
+        @click="createBet"
       >
+        Create Bet
+      </BaseBtn>
     </div>
   </div>
 </template>
 
 <script>
-import InlineSvg from "vue-inline-svg";
 import BaseBtn from "@/components/BaseBtn.vue";
+import TheHeader from "@/components/TheHeader.vue";
+import BetName from "@/components/BetName.vue";
 
 export default {
   name: "CreateBetView",
   components: {
+    BetName,
+    TheHeader,
     BaseBtn,
-    InlineSvg,
   },
   data() {
     return {
-      back: require("../assets/arrow-left.svg"),
-      betAmount: "",
-      betName: "",
-      betOptions: [],
-      betTime: "30",
-      typeOfBet: "fixed",
+      bet: {
+        amount: "",
+        name: "",
+        options: [],
+        time: "30",
+        type: "fixed",
+      },
     };
   },
   computed: {
     canCreateBet() {
       return (
-        this.betAmount.length &&
-        this.betName.length &&
-        this.betTime.length &&
-        this.betOptions.length > 1
+        this.bet.amount.length &&
+        this.bet.name.length &&
+        this.bet.time.length &&
+        this.bet.options.length > 1
       );
     },
   },
   methods: {
     addBetOption() {
-      this.betOptions.push({
+      this.bet.options.push({
         name: "",
       });
+    },
+    createBet() {
+      this.$store.commit("SET_BET", this.bet);
+      this.$router.push("/bet-created");
     },
   },
 };
@@ -146,65 +139,8 @@ export default {
   height: calc(100% - 32px);
   padding: 16px;
 
-  .header {
-    position: relative;
-    .back {
-      float: left;
-    }
-    .title {
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
-    }
-  }
-
   .content {
     margin-top: 16px;
-
-    .bet-name-input {
-      border: 1px solid #364152;
-      border-radius: 16px;
-      display: flex;
-      margin-bottom: 24px;
-      padding: 12px;
-      position: relative;
-
-      .img-logo-container {
-        align-items: center;
-        border: 1px solid #364152;
-        border-radius: 12px;
-        background: #364152;
-        display: flex;
-        height: 48px;
-        justify-content: center;
-        width: 48px;
-
-        .img-logo {
-          height: 24px;
-          width: 24px;
-        }
-      }
-
-      .label {
-        color: #697586;
-        font-size: 12px;
-        font-style: normal;
-        font-weight: 600;
-        line-height: 18px; /* 150% */
-        margin-left: 12px;
-      }
-
-      .input {
-        background: transparent;
-        border: none;
-        color: white;
-        position: absolute;
-        bottom: 14px;
-        left: 70px;
-        height: 24px;
-        outline: none;
-      }
-    }
 
     .bet-options {
       margin-top: 16px;
