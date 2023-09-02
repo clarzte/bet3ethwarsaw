@@ -1,7 +1,7 @@
 <template>
   <div id="bet-ended-view">
     <TheHeader></TheHeader>
-    <BetInfo> Waiting for results (0/5) </BetInfo>
+    <BetInfo> Waiting for results ({{ numberOfVotes }}/5) </BetInfo>
     <div class="content">
       <AppTimer :elapsed="timeElapsed" :limit="timeLimit" />
       <span class="vote"> Please, now you need to vote who won this bet </span>
@@ -55,6 +55,11 @@ export default {
       timeInterval: undefined,
       isUserVote: false,
     };
+  },
+  computed: {
+    numberOfVotes() {
+      return this.option1Votes + this.option2Votes;
+    },
   },
   methods: {
     startTimer() {
