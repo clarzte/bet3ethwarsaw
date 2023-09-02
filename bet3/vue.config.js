@@ -3,6 +3,6 @@ module.exports = defineConfig({
   transpileDependencies: true,
   pwa: {
     name: "Bet3",
-    themeColor: "#AAB000",
+    themeColor: "#000",
   },
 });
