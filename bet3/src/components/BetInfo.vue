@@ -7,8 +7,10 @@
       <div class="bet-name">{{ betName }}</div>
       <div class="bet-time">
         <inline-svg :src="require('../assets/clock.svg')" />
-        {{ betTime }}
-        mins to finish
+        <slot>
+          {{ betTime }}
+          mins to finish
+        </slot>
       </div>
     </div>
   </div>

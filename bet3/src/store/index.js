@@ -30,6 +30,9 @@ export default new Vuex.Store({
     SET_TOTAL_POOL(state, totalPool) {
       state.totalPool = totalPool;
     },
+    ADD_VOTE(state, index) {
+      state.bet.options[index].votes++;
+    },
   },
   actions: {},
   modules: {},

@@ -123,6 +123,7 @@ export default {
     addBetOption() {
       this.bet.options.push({
         name: "",
+        votes: 0,
       });
     },
     async writeContract() {
@@ -143,7 +144,7 @@ export default {
     },
     async createBet() {
       this.$store.commit("SET_BET", this.bet);
-      await this.writeContract();
+      // await this.writeContract();
       await this.$router.push("/bet-created");
     },
   },
