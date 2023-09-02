@@ -19,6 +19,7 @@
           v-model="betName"
         />
       </div>
+      <hr />
       <div class="bet-options">
         <div class="label">Bet Options</div>
         <div v-for="(option, index) in betOptions" :key="index">
@@ -34,25 +35,38 @@
           <span>Add bet option</span>
         </BaseBtn>
       </div>
+      <hr />
       <div class="bet-amount">
-        <span class="label">Bet Amount</span>
-        <div class="type-of-bet">
-          <div
-            class="fixed-bet"
-            :class="{ active: typeOfBet === 'fixed' }"
-            @click="typeOfBet = 'fixed'"
-          >
-            <span>Fixed</span>
-          </div>
-          <div
-            class="open-bet"
-            :class="{ active: typeOfBet === 'open' }"
-            @click="typeOfBet = 'open'"
-          >
-            <span>Open</span>
+        <div class="type-of-bet-container">
+          <span class="label">Bet Amount</span>
+          <div class="type-of-bet">
+            <div
+              class="fixed-bet"
+              :class="{ active: typeOfBet === 'fixed' }"
+              @click="typeOfBet = 'fixed'"
+            >
+              <span>Fixed</span>
+            </div>
+            <div
+              class="open-bet"
+              :class="{ active: typeOfBet === 'open' }"
+              @click="typeOfBet = 'open'"
+            >
+              <span>Open</span>
+            </div>
           </div>
         </div>
+        <div class="bet-amount-input-container">
+          <input
+            class="bet-amount-input"
+            placeholder="ENTER BET AMOUNT"
+            type="number"
+            v-model="betAmount"
+          />
+          <span class="currency"> MNT </span>
+        </div>
       </div>
+      <hr />
     </div>
   </div>
 </template>
@@ -70,6 +84,7 @@ export default {
   data() {
     return {
       back: require("../assets/arrow-left.svg"),
+      betAmount: "",
       betName: "",
       betOptions: [],
       typeOfBet: "fixed",
@@ -114,6 +129,7 @@ export default {
       border: 1px solid #364152;
       border-radius: 16px;
       display: flex;
+      margin-bottom: 24px;
       padding: 12px;
       position: relative;
 
@@ -156,6 +172,7 @@ export default {
 
     .bet-options {
       margin-top: 16px;
+      margin-bottom: 24px;
 
       .label {
         color: white;
@@ -200,10 +217,10 @@ export default {
     }
 
     .bet-amount {
-      align-items: center;
       display: flex;
-      justify-content: space-between;
+      flex-direction: column;
       margin-top: 24px;
+      margin-bottom: 24px;
 
       .label {
         font-size: 10px;
@@ -214,34 +231,70 @@ export default {
         text-transform: uppercase;
       }
 
-      .type-of-bet {
-        border: 1px solid #4b5565;
-        border-radius: 99px;
+      .type-of-bet-container {
+        align-items: center;
         display: flex;
-        font-size: 14px;
+        justify-content: space-between;
+        .type-of-bet {
+          border: 1px solid #4b5565;
+          border-radius: 99px;
+          display: flex;
+          font-size: 14px;
 
-        .fixed-bet {
-          border-radius: 99px 0 0 99px;
-          color: white;
-          padding: 6px 24px;
+          .fixed-bet {
+            border-radius: 99px 0 0 99px;
+            color: white;
+            padding: 6px 24px;
 
-          &.active {
-            background: white;
-            color: black;
+            &.active {
+              background: white;
+              color: black;
+            }
           }
-        }
 
-        .open-bet {
-          border-radius: 0 99px 99px 0;
-          color: white;
-          padding: 6px 24px;
+          .open-bet {
+            border-radius: 0 99px 99px 0;
+            color: white;
+            padding: 6px 24px;
 
-          &.active {
-            background: white;
-            color: black;
+            &.active {
+              background: white;
+              color: black;
+            }
           }
         }
       }
+
+      .bet-amount-input-container {
+        align-items: center;
+        border: 1px solid #364152;
+        border-radius: 16px;
+        display: flex;
+        margin-top: 16px;
+        padding: 12px;
+
+        .bet-amount-input {
+          background: transparent;
+          border: none;
+          color: white;
+          height: 24px;
+          outline: none;
+          width: 100%;
+        }
+
+        .currency {
+          font-size: 12px;
+          font-style: normal;
+          font-weight: 600;
+          line-height: 18px; /* 150% */
+        }
+      }
+    }
+
+    hr {
+      background: #364152;
+      border: none;
+      height: 1px;
     }
   }
 }
