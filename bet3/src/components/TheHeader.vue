@@ -7,6 +7,9 @@
       <div class="title">
         <slot />
       </div>
+      <div class="right">
+        <slot name="right" />
+      </div>
     </div>
   </div>
 </template>
@@ -38,6 +41,10 @@ export default {
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
+  }
+
+  .right {
+    float: right;
   }
 }
 </style>

@@ -24,7 +24,9 @@
     <div class="footer">
       <div class="buttons-container">
         <BaseBtn class="invite-friends">Invite friends</BaseBtn>
-        <BaseBtn class="skip">Skip this step</BaseBtn>
+        <BaseBtn class="skip" @click="$router.push('/bet/1')">
+          Skip this step
+        </BaseBtn>
       </div>
     </div>
   </div>
