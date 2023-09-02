@@ -12,11 +12,15 @@ export default new Vuex.Store({
       time: "",
       type: "",
     },
+    userChoice: "",
   },
   getters: {},
   mutations: {
     SET_BET(state, bet) {
       state.bet = bet;
+    },
+    SET_USER_CHOICE(state, userChoice) {
+      state.userChoice = userChoice;
     },
   },
   actions: {},

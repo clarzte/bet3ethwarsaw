@@ -24,6 +24,9 @@
     <div class="content">
       <PrizePool></PrizePool>
     </div>
+    <div class="footer">
+      <PlaceYourBet />
+    </div>
   </div>
 </template>
 
@@ -31,12 +34,14 @@
 import TheHeader from "@/components/TheHeader.vue";
 import InlineSvg from "vue-inline-svg";
 import PrizePool from "@/components/PrizePool.vue";
+import PlaceYourBet from "@/components/PlaceYourBet.vue";
 export default {
   name: "BetDetailView",
   components: {
     PrizePool,
     TheHeader,
     InlineSvg,
+    PlaceYourBet,
   },
   props: {},
   data() {
