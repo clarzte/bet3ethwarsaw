@@ -1,15 +1,12 @@
 <template>
   <button class="ripple-button" @click="addRippleEffect">
-    <span class="text"> {{ text }} </span>
+    <span class="text"><slot /></span>
   </button>
 </template>
 
 <script>
 export default {
   name: "BaseBtn",
-  props: {
-    text: { required: true, type: String },
-  },
   methods: {
     addRippleEffect(e) {
       let button = e.currentTarget;

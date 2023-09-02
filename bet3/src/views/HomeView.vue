@@ -1,5 +1,5 @@
 <template>
-  <div class="home">
+  <div id="home-view">
     <div class="logo-with-text">
       <img alt="Vue logo" src="../assets/logo.png" class="logo" />
       <h1 class="title">
@@ -7,11 +7,9 @@
         and earn rewards
       </h1>
     </div>
-    <BaseBtn
-      ref="walletConnectBtn"
-      class="login-btn"
-      text="Log in with your Wallet"
-    />
+    <BaseBtn ref="walletConnectBtn" class="login-btn">
+      Log in with your Wallet
+    </BaseBtn>
   </div>
 </template>
 
@@ -24,7 +22,7 @@ import {
   w3mProvider,
 } from "@web3modal/ethereum";
 import { Web3Modal } from "@web3modal/html";
-import { configureChains, createConfig } from "@wagmi/core";
+import { configureChains, createConfig, getAccount } from "@wagmi/core";
 import { mantleTestnet } from "@wagmi/core/chains";
 
 export default {
@@ -50,12 +48,21 @@ export default {
     this.$refs["walletConnectBtn"].$el.addEventListener("click", () => {
       web3modal.openModal();
     });
+
+    web3modal.subscribeModal(() => {
+      const address = getAccount().address;
+      if (!address) {
+        return;
+      }
+      console.log("Address: ", address);
+      this.$router.push("/dashboard");
+    });
   },
 };
 </script>
 
 <style scoped lang="scss">
-.home {
+#home-view {
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: 1fr;
