@@ -26,6 +26,9 @@ import InlineSvg from "vue-inline-svg";
 import PrizePool from "@/components/PrizePool.vue";
 import PlaceYourBet from "@/components/PlaceYourBet.vue";
 import BetInfo from "@/components/BetInfo.vue";
+import { readContract } from "@wagmi/core";
+import bet3 from "@/abi/bet3.json";
+import { ethers } from "ethers";
 export default {
   name: "BetDetailView",
   components: {
@@ -42,6 +45,39 @@ export default {
       betTime: this.$store.state.bet.time,
       totalPool: this.$store.state.totalPool,
     };
+  },
+  async created() {
+    const bet = await readContract({
+      address: "0x3e75f922937F4DBD8c2dfBBC0B14e322391C6f11",
+      abi: bet3,
+      functionName: "bets",
+      args: [this.$route.params.id],
+    });
+    this.$store.commit("SET_BET", {
+      name: bet[0],
+      options: [
+        {
+          name: bet[1],
+          vote: 0,
+        },
+        {
+          name: bet[2],
+          vote: 0,
+        },
+      ],
+      amount: bet[3],
+      time: bet[4],
+      finalizationTime: bet[5],
+    });
+    this.betName = bet[0];
+    const totalPool = await readContract({
+      address: "0x3e75f922937F4DBD8c2dfBBC0B14e322391C6f11",
+      abi: bet3,
+      functionName: "getTotalPrize",
+      args: [this.$route.params.id],
+    });
+    this.totalPool = parseInt(ethers.utils.formatEther(totalPool));
+    this.$store.commit("SET_TOTAL_POOL", totalPool);
   },
 };
 </script>

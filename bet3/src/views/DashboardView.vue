@@ -9,6 +9,16 @@
       <BaseBtn class="bet-btn" @click="$router.push('/create-bet')">
         Create a Bet
       </BaseBtn>
+      <BaseBtn
+        class="bet-btn"
+        @click="
+          $router.push(
+            'bet/0x981a414dcc482593ebffde081204da175090775dc946209fbb2ba4b7ba813cf2'
+          )
+        "
+      >
+        Join bet
+      </BaseBtn>
     </div>
     <div class="footer">
       <div

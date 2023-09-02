@@ -1,5 +1,5 @@
 <template>
-  <div class="prize-pool">
+  <div v-if="init" class="prize-pool">
     <div class="price-pool-box">
       <slot name="price-pool-box"> Price Pool </slot>
     </div>
@@ -7,19 +7,43 @@
       <slot name="amount" />
       <div class="currency">MNT</div>
     </div>
-    <div v-if="showTypeOfBet" class="type-of-bet">Fixed Bet 450 MNT</div>
+    <div v-if="showTypeOfBet" class="type-of-bet">
+      Fixed Bet {{ betAmount }} MNT
+    </div>
     <slot name="additional-info" />
   </div>
 </template>
 
 <script>
+import { mapState } from "vuex";
+import { ethers } from "ethers";
+
 export default {
   name: "PrizePool",
   props: {
     showTypeOfBet: { type: Boolean, default: true },
   },
   data() {
-    return {};
+    return {
+      init: false,
+      betAmount: null,
+    };
+  },
+  watch: {
+    bet() {
+      this.init = true;
+      this.betAmount = parseInt(ethers.utils.formatEther(this.bet.amount));
+    },
+  },
+  created() {
+    if (this.bet.amount) {
+      this.init = true;
+    }
+  },
+  computed: {
+    ...mapState({
+      bet: (state) => state.bet,
+    }),
   },
 };
 </script>

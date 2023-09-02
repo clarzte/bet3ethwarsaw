@@ -1,5 +1,5 @@
 <template>
-  <div class="place-your-bet">
+  <div v-if="init" class="place-your-bet">
     <span class="text"> Place your bet </span>
     <div class="buttons-container">
       <BaseBtn class="btn primary-btn" @click="chooseOption(option1)">
@@ -16,6 +16,8 @@
 
 <script>
 import BaseBtn from "@/components/BaseBtn.vue";
+import { mapState } from "vuex";
+
 export default {
   name: "PlaceYourBet",
   components: {
@@ -24,9 +26,22 @@ export default {
   props: {},
   data() {
     return {
-      option1: this.$store.state.bet.options[0].name,
-      option2: this.$store.state.bet.options[1].name,
+      init: false,
+      option1: "",
+      option2: "",
     };
+  },
+  watch: {
+    bet() {
+      this.init = true;
+      this.option1 = this.bet.options[0].name;
+      this.option2 = this.bet.options[1].name;
+    },
+  },
+  computed: {
+    ...mapState({
+      bet: (state) => state.bet,
+    }),
   },
   methods: {
     chooseOption(option) {

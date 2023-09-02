@@ -38,6 +38,7 @@ const routes = [
     path: "/bet/:id",
     name: "bet-detail",
     component: () => import("../views/BetDetailsView.vue"),
+    meta: { requiresAuth: true },
   },
   {
     path: "/bet/:id/confirm",
@@ -61,5 +62,20 @@ const router = new VueRouter({
   base: process.env.BASE_URL,
   routes,
 });
+
+// router.beforeEach((to) => {
+//   const loggedIn = localStorage.getItem("address");
+//   // instead of having to check every route record with
+//   // to.matched.some(record => record.meta.requiresAuth)
+//   if (to.meta.requiresAuth && !loggedIn) {
+//     // this route requires auth, check if logged in
+//     // if not, redirect to login page.
+//     return {
+//       path: "/",
+//       // save the location we were at to come back later
+//       query: { redirect: to.fullPath },
+//     };
+//   }
+// });
 
 export default router;

@@ -49,11 +49,14 @@ export default {
   props: {},
   data() {
     return {
-      betAmount: this.$store.state.bet.amount,
+      betAmount: parseInt(
+        ethers.utils.formatEther(this.$store.state.bet.amount)
+      ),
       userChoice: this.$store.state.userChoice,
     };
   },
   created() {
+    console.log(this.$store.state.bet.amount);
     watchContractEvent(
       {
         address: "0x3e75f922937F4DBD8c2dfBBC0B14e322391C6f11",
@@ -67,22 +70,21 @@ export default {
   },
   methods: {
     async confirm() {
-      const totalPool = +this.$store.state.totalPool;
+      const totalPool = this.$store.state.totalPool;
       await this.writeContract();
-      this.$store.commit("SET_TOTAL_POOL", totalPool + +this.betAmount);
+      this.$store.commit("SET_TOTAL_POOL", totalPool + this.betAmount);
       await this.$router.push(`/bet/${this.$route.params.id}/confirmed`);
     },
     async writeContract() {
-      const amount = ethers.utils
-        .parseEther(this.$store.state.bet.amount)
-        .toString();
+      const amount = this.$store.state.bet.amount.toString();
       console.log(amount);
       const config = await prepareWriteContract({
         address: "0x3e75f922937F4DBD8c2dfBBC0B14e322391C6f11",
         abi: bet3,
         functionName: "placeBet",
         args: [
-          this.$store.state.betCreatedContractResponse[0].args.betId,
+          this.$route.params.id ||
+            this.$store.state.betCreatedContractResponse[0].args.betId,
           this.$store.state.userChoice,
         ],
         value: amount,
