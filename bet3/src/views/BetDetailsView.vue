@@ -8,20 +8,21 @@
         </div>
       </template>
     </the-header>
-    <div class="content">
-      <div class="bet-info">
-        <div class="img-logo-container">
-          <img alt="missing.png" class="img-logo" src="@/assets/ball.png" />
-        </div>
-        <div class="bet-text">
-          <div class="bet-name">{{ betName }}</div>
-          <div class="bet-time">
-            <inline-svg :src="require('../assets/clock.svg')" />
-            {{ betTime }}
-            mins to finish
-          </div>
+    <div class="bet-info">
+      <div class="img-logo-container">
+        <img alt="missing.png" class="img-logo" src="@/assets/ball.png" />
+      </div>
+      <div class="bet-text">
+        <div class="bet-name">{{ betName }}</div>
+        <div class="bet-time">
+          <inline-svg :src="require('../assets/clock.svg')" />
+          {{ betTime }}
+          mins to finish
         </div>
       </div>
+    </div>
+    <div class="content">
+      <PrizePool></PrizePool>
     </div>
   </div>
 </template>
@@ -29,9 +30,11 @@
 <script>
 import TheHeader from "@/components/TheHeader.vue";
 import InlineSvg from "vue-inline-svg";
+import PrizePool from "@/components/PrizePool.vue";
 export default {
   name: "BetDetailView",
   components: {
+    PrizePool,
     TheHeader,
     InlineSvg,
   },
@@ -54,7 +57,7 @@ export default {
   color: white;
   display: grid;
   grid-template-columns: 100%;
-  grid-template-rows: min-content 1fr auto;
+  grid-template-rows: min-content min-content 1fr;
   height: calc(100% - 32px);
   padding: 16px;
 
@@ -74,51 +77,52 @@ export default {
     }
   }
 
-  .content {
-    .bet-info {
+  .bet-info {
+    display: flex;
+    gap: 20px;
+    margin-top: 10px;
+
+    .img-logo-container {
+      align-items: center;
+      border: 1px solid #364152;
+      border-radius: 50%;
+      background: #364152;
       display: flex;
-      gap: 20px;
-      margin-top: 10px;
+      height: 48px;
+      justify-content: center;
+      width: 48px;
 
-      .img-logo-container {
-        align-items: center;
-        border: 1px solid #364152;
-        border-radius: 50%;
-        background: #364152;
-        display: flex;
-        height: 48px;
-        justify-content: center;
-        width: 48px;
-
-        .img-logo {
-          height: 24px;
-          width: 24px;
-        }
-      }
-
-      .bet-name {
-        color: #fff;
-        font-size: 20px;
-        font-style: normal;
-        font-weight: 600;
-        line-height: normal;
-        letter-spacing: -0.4px;
-        text-align: left;
-      }
-
-      .bet-time {
-        color: #17b26a;
-        display: flex;
-        font-size: 14px;
-        font-style: normal;
-        font-weight: 400;
-        gap: 4px;
-        line-height: normal;
-        letter-spacing: -0.28px;
-        margin-top: 4px;
-        text-align: left;
+      .img-logo {
+        height: 24px;
+        width: 24px;
       }
     }
+
+    .bet-name {
+      color: #fff;
+      font-size: 20px;
+      font-style: normal;
+      font-weight: 600;
+      line-height: normal;
+      letter-spacing: -0.4px;
+      text-align: left;
+    }
+
+    .bet-time {
+      color: #17b26a;
+      display: flex;
+      font-size: 14px;
+      font-style: normal;
+      font-weight: 400;
+      gap: 4px;
+      line-height: normal;
+      letter-spacing: -0.28px;
+      margin-top: 4px;
+      text-align: left;
+    }
+  }
+  .content {
+    align-self: center;
   }
 }
 </style>
