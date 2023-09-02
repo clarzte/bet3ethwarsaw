@@ -1,5 +1,5 @@
 <template>
-  <button class="ripple-button" @click="addRippleEffect">
+  <button class="ripple-button" :disabled="disabled" @click="addRippleEffect">
     <span class="text"><slot /></span>
   </button>
 </template>
@@ -7,6 +7,9 @@
 <script>
 export default {
   name: "BaseBtn",
+  props: {
+    disabled: { type: Boolean, default: false },
+  },
   methods: {
     addRippleEffect(e) {
       let button = e.currentTarget;

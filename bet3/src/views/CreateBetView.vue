@@ -22,16 +22,20 @@
       <hr />
       <div class="bet-options">
         <div class="label">Bet Options</div>
-        <div v-for="(option, index) in betOptions" :key="index">
-          <div class="bet-option-input-container">
+        <template v-for="(option, index) in betOptions">
+          <div class="bet-option-input-container" :key="index">
             <input
               class="bet-option-input"
               v-model="option.name"
               :placeholder="`Option ${index + 1}`"
             />
           </div>
-        </div>
-        <BaseBtn class="add-bet-option-btn" @click="addBetOption">
+        </template>
+        <BaseBtn
+          v-if="betOptions.length < 2"
+          class="add-bet-option-btn"
+          @click="addBetOption"
+        >
           <span>Add bet option</span>
         </BaseBtn>
       </div>
@@ -67,6 +71,28 @@
         </div>
       </div>
       <hr />
+      <div class="bet-time-container">
+        <div class="label">Time for betting</div>
+        <div class="bet-time-input-container">
+          <input class="bet-time-input" type="number" v-model="betTime" />
+          <span class="time"> mins </span>
+        </div>
+      </div>
+      <hr />
+      <div class="info-about-bet-container">
+        <span class="validation-info">
+          VALIDATION WILL HAPPEN AFTER THE BETS FINISH
+        </span>
+        <span class="auto-finalize-info"> AUTO FINALIZE IN 24H </span>
+      </div>
+    </div>
+    <div class="footer">
+      <BaseBtn
+        :disabled="!canCreateBet"
+        :class="{ disabled: !canCreateBet }"
+        class="create-bet-btn"
+        >Create Bet</BaseBtn
+      >
     </div>
   </div>
 </template>
@@ -87,8 +113,19 @@ export default {
       betAmount: "",
       betName: "",
       betOptions: [],
+      betTime: "30",
       typeOfBet: "fixed",
     };
+  },
+  computed: {
+    canCreateBet() {
+      return (
+        this.betAmount.length &&
+        this.betName.length &&
+        this.betTime.length &&
+        this.betOptions.length > 1
+      );
+    },
   },
   methods: {
     addBetOption() {
@@ -97,7 +134,6 @@ export default {
       });
     },
   },
-  mounted() {},
 };
 </script>
 
@@ -291,10 +327,92 @@ export default {
       }
     }
 
+    .bet-time-container {
+      align-items: center;
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+      margin-bottom: 24px;
+
+      .label {
+        font-size: 10px;
+        font-style: normal;
+        font-weight: 600;
+        line-height: normal;
+        letter-spacing: -0.2px;
+        text-transform: uppercase;
+      }
+
+      .bet-time-input-container {
+        border: 1px solid #364152;
+        border-radius: 16px;
+        padding: 12px;
+        width: 40%;
+
+        .bet-time-input {
+          background: transparent;
+          border: none;
+          color: white;
+          height: 24px;
+          outline: none;
+          width: 60%;
+        }
+
+        .time {
+          font-size: 12px;
+          font-style: normal;
+          font-weight: 600;
+          line-height: 18px; /* 150% */
+          text-transform: uppercase;
+        }
+      }
+    }
+
+    .info-about-bet-container {
+      align-items: flex-start;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 20px;
+
+      .validation-info {
+        font-size: 10px;
+        font-style: normal;
+        font-weight: 600;
+        line-height: normal;
+        letter-spacing: -0.2px;
+      }
+
+      .auto-finalize-info {
+        font-size: 10px;
+        font-style: normal;
+        font-weight: 600;
+        line-height: normal;
+        letter-spacing: -0.2px;
+        opacity: 0.4;
+      }
+    }
+
     hr {
       background: #364152;
       border: none;
       height: 1px;
+    }
+  }
+
+  .footer {
+    align-self: flex-end;
+
+    .create-bet-btn {
+      background: white;
+      border-radius: 99px;
+      border: none;
+      padding: 13px 32px;
+      width: 100%;
+
+      &.disabled {
+        opacity: 0.4;
+      }
     }
   }
 }
