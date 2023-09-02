@@ -8,22 +8,10 @@
         </div>
       </template>
     </the-header>
-    <div class="bet-info">
-      <div class="img-logo-container">
-        <img alt="missing.png" class="img-logo" src="@/assets/ball.png" />
-      </div>
-      <div class="bet-text">
-        <div class="bet-name">{{ betName }}</div>
-        <div class="bet-time">
-          <inline-svg :src="require('../assets/clock.svg')" />
-          {{ betTime }}
-          mins to finish
-        </div>
-      </div>
-    </div>
+    <bet-info />
     <div class="content">
       <PrizePool>
-        <template #amount> 1,450 </template>
+        <template #amount> {{ totalPool }} </template>
       </PrizePool>
     </div>
     <div class="footer">
@@ -37,9 +25,11 @@ import TheHeader from "@/components/TheHeader.vue";
 import InlineSvg from "vue-inline-svg";
 import PrizePool from "@/components/PrizePool.vue";
 import PlaceYourBet from "@/components/PlaceYourBet.vue";
+import BetInfo from "@/components/BetInfo.vue";
 export default {
   name: "BetDetailView",
   components: {
+    BetInfo,
     PrizePool,
     TheHeader,
     InlineSvg,
@@ -50,12 +40,9 @@ export default {
     return {
       betName: this.$store.state.bet.name,
       betTime: this.$store.state.bet.time,
+      totalPool: this.$store.state.totalPool,
     };
   },
-  computed: {},
-  methods: {},
-  mounted() {},
-  beforeDestroy() {},
 };
 </script>
 

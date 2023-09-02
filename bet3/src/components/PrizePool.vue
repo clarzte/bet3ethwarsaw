@@ -8,6 +8,7 @@
       <div class="currency">MNT</div>
     </div>
     <div v-if="showTypeOfBet" class="type-of-bet">Fixed Bet 450 MNT</div>
+    <slot name="additional-info" />
   </div>
 </template>
 
@@ -20,10 +21,6 @@ export default {
   data() {
     return {};
   },
-  computed: {},
-  methods: {},
-  mounted() {},
-  beforeDestroy() {},
 };
 </script>
 

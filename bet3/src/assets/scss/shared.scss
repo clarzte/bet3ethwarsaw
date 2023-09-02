@@ -1,0 +1,8 @@
+%page-shared {
+  color: white;
+  display: grid;
+  grid-template-columns: 100%;
+  grid-template-rows: min-content 1fr auto;
+  height: calc(100% - 32px);
+  padding: 16px;
+}

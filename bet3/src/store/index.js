@@ -5,6 +5,7 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
+    bets: [],
     bet: {
       amount: "",
       name: "",
@@ -19,6 +20,9 @@ export default new Vuex.Store({
   mutations: {
     SET_BET(state, bet) {
       state.bet = bet;
+    },
+    SET_BETS(state, bets) {
+      state.bets = bets;
     },
     SET_USER_CHOICE(state, userChoice) {
       state.userChoice = userChoice;

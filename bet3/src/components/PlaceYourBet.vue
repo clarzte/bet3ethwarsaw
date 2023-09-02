@@ -6,7 +6,7 @@
         {{ option1 }}
         <span class="number-of-bets">3 Bets</span>
       </BaseBtn>
-      <BaseBtn class="btn" @click="chooseOption(option1)">
+      <BaseBtn class="btn" @click="chooseOption(option2)">
         {{ option2 }}
         <span class="number-of-bets">2 Bets</span>
       </BaseBtn>

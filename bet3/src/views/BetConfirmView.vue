@@ -14,7 +14,7 @@
       </PrizePool>
     </div>
     <div class="footer">
-      <BaseBtn class="confirm">
+      <BaseBtn class="confirm" @click="confirm">
         <span>Place</span>
         <span class="amount">
           {{ betAmount }}
@@ -44,6 +44,13 @@ export default {
       betAmount: this.$store.state.bet.amount,
       userChoice: this.$store.state.userChoice,
     };
+  },
+  methods: {
+    confirm() {
+      const totalPool = +this.$store.state.totalPool;
+      this.$store.commit("SET_TOTAL_POOL", totalPool + +this.betAmount);
+      this.$router.push(`/bet/${this.$route.params.id}/confirmed`);
+    },
   },
 };
 </script>
