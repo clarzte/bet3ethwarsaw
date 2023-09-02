@@ -13,6 +13,7 @@ export default new Vuex.Store({
       type: "",
     },
     userChoice: "",
+    totalPool: 1450,
   },
   getters: {},
   mutations: {
@@ -21,6 +22,9 @@ export default new Vuex.Store({
     },
     SET_USER_CHOICE(state, userChoice) {
       state.userChoice = userChoice;
+    },
+    SET_TOTAL_POOL(state, totalPool) {
+      state.totalPool = totalPool;
     },
   },
   actions: {},

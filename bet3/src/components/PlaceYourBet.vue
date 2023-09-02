@@ -2,11 +2,11 @@
   <div class="place-your-bet">
     <span class="text"> Place your bet </span>
     <div class="buttons-container">
-      <BaseBtn class="btn">
+      <BaseBtn class="btn" @click="chooseOption(option1)">
         {{ option1 }}
         <span class="number-of-bets">3 Bets</span>
       </BaseBtn>
-      <BaseBtn class="btn">
+      <BaseBtn class="btn" @click="chooseOption(option1)">
         {{ option2 }}
         <span class="number-of-bets">2 Bets</span>
       </BaseBtn>
@@ -28,10 +28,12 @@ export default {
       option2: this.$store.state.bet.options[1].name,
     };
   },
-  computed: {},
-  methods: {},
-  mounted() {},
-  beforeDestroy() {},
+  methods: {
+    chooseOption(option) {
+      this.$store.commit("SET_USER_CHOICE", option);
+      this.$router.push(`/bet/${this.$route.params.id}/confirm`);
+    },
+  },
 };
 </script>
 

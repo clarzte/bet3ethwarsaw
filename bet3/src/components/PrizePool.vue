@@ -1,18 +1,22 @@
 <template>
   <div class="prize-pool">
-    <div class="price-pool-box">Prize pool</div>
+    <div class="price-pool-box">
+      <slot name="price-pool-box"> Price Pool </slot>
+    </div>
     <div class="amount">
-      1,450
+      <slot name="amount" />
       <div class="currency">MNT</div>
     </div>
-    <div class="type-of-bet">Fixed Bet 450 MNT</div>
+    <div v-if="showTypeOfBet" class="type-of-bet">Fixed Bet 450 MNT</div>
   </div>
 </template>
 
 <script>
 export default {
   name: "PrizePool",
-  props: {},
+  props: {
+    showTypeOfBet: { type: Boolean, default: true },
+  },
   data() {
     return {};
   },
@@ -59,7 +63,7 @@ export default {
       letter-spacing: -0.4px;
       position: absolute;
       right: -50px;
-      top: 50%;
+      top: 54%;
     }
   }
 

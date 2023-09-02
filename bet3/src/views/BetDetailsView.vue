@@ -22,7 +22,9 @@
       </div>
     </div>
     <div class="content">
-      <PrizePool></PrizePool>
+      <PrizePool>
+        <template #amount> 1,450 </template>
+      </PrizePool>
     </div>
     <div class="footer">
       <PlaceYourBet />

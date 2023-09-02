@@ -39,6 +39,11 @@ const routes = [
     name: "bet-detail",
     component: () => import("../views/BetDetailsView.vue"),
   },
+  {
+    path: "/bet/:id/confirm",
+    name: "bet-confirm",
+    component: () => import("../views/BetConfirmView.vue"),
+  },
 ];
 
 const router = new VueRouter({
