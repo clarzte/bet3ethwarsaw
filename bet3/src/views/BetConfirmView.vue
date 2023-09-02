@@ -31,6 +31,14 @@
 import BaseBtn from "@/components/BaseBtn.vue";
 import TheHeader from "@/components/TheHeader.vue";
 import PrizePool from "@/components/PrizePool.vue";
+import bet3 from "@/abi/bet3.json";
+import { ethers } from "ethers";
+import {
+  writeContract,
+  waitForTransaction,
+  prepareWriteContract,
+  watchContractEvent,
+} from "@wagmi/core";
 export default {
   name: "BetConfirmView",
   components: {
@@ -45,25 +53,37 @@ export default {
       userChoice: this.$store.state.userChoice,
     };
   },
+  created() {
+    watchContractEvent(
+      {
+        address: "0x3e75f922937F4DBD8c2dfBBC0B14e322391C6f11",
+        abi: bet3,
+        eventName: "BetPlaced",
+      },
+      (data) => {
+        this.$store.commit("SET_BET_PLACED_CONTRACT_RESPONSE", data);
+      }
+    );
+  },
   methods: {
-    confirm() {
+    async confirm() {
       const totalPool = +this.$store.state.totalPool;
+      await this.writeContract();
       this.$store.commit("SET_TOTAL_POOL", totalPool + +this.betAmount);
-      this.$router.push(`/bet/${this.$route.params.id}/confirmed`);
+      await this.$router.push(`/bet/${this.$route.params.id}/confirmed`);
     },
     async writeContract() {
-      const amount = ethers.utils.parseEther(this.bet.amount).toString();
+      const amount = ethers.utils
+        .parseEther(this.$store.state.bet.amount)
+        .toString();
       console.log(amount);
       const config = await prepareWriteContract({
         address: "0x3e75f922937F4DBD8c2dfBBC0B14e322391C6f11",
         abi: bet3,
         functionName: "placeBet",
         args: [
-          this.bet.name,
-          this.bet.options[0].name,
-          this.bet.options[1].name,
-          amount,
-          this.bet.time * 60,
+          this.$store.state.betCreatedContractResponse[0].args.betId,
+          this.$store.state.userChoice,
         ],
         value: amount,
       });
@@ -77,7 +97,7 @@ export default {
         },
       });
       console.log(wait);
-    }
+    },
   },
 };
 </script>

@@ -121,7 +121,9 @@ export default {
         abi: bet3,
         eventName: "BetCreated",
       },
-      (data) => console.log(data)
+      (data) => {
+        this.$store.commit("SET_BET_CREATED_CONTRACT_RESPONSE", data);
+      }
     );
   },
   computed: {
@@ -169,7 +171,7 @@ export default {
     },
     async createBet() {
       this.$store.commit("SET_BET", this.bet);
-      // await this.writeContract();
+      await this.writeContract();
       await this.$router.push("/bet-created");
     },
   },

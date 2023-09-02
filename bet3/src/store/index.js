@@ -15,6 +15,9 @@ export default new Vuex.Store({
     },
     userChoice: "",
     totalPool: 1450,
+    betCreatedContractResponse: null,
+    betPlacedContractResponse: null,
+    betFinalizedContractResponse: null,
   },
   getters: {},
   mutations: {
@@ -32,6 +35,15 @@ export default new Vuex.Store({
     },
     ADD_VOTE(state, index) {
       state.bet.options[index].votes++;
+    },
+    SET_BET_CREATED_CONTRACT_RESPONSE(state, betCreatedContractResponse) {
+      state.betCreatedContractResponse = betCreatedContractResponse;
+    },
+    SET_BET_PLACED_CONTRACT_RESPONSE(state, betPlacedContractResponse) {
+      state.betPlacedContractResponse = betPlacedContractResponse;
+    },
+    SET_BET_FINALIZED_CONTRACT_RESPONSE(state, betFinalizedContractResponse) {
+      state.betFinalizedContractResponse = betFinalizedContractResponse;
     },
   },
   actions: {},

@@ -35,6 +35,13 @@ import BetInfo from "@/components/BetInfo.vue";
 import AppTimer from "@/components/AppTimer.vue";
 import BaseBtn from "@/components/BaseBtn.vue";
 import InlineSvg from "vue-inline-svg";
+import {
+  prepareWriteContract,
+  waitForTransaction,
+  watchContractEvent,
+  writeContract,
+} from "@wagmi/core";
+import bet3 from "@/abi/bet3.json";
 export default {
   name: "BetEndedView",
   components: {
@@ -61,6 +68,18 @@ export default {
       return this.option1Votes + this.option2Votes;
     },
   },
+  created() {
+    watchContractEvent(
+      {
+        address: "0x3e75f922937F4DBD8c2dfBBC0B14e322391C6f11",
+        abi: bet3,
+        eventName: "BetFinalized",
+      },
+      (data) => {
+        this.$store.commit("SET_BET_FINALIZED_CONTRACT_RESPONSE", data);
+      }
+    );
+  },
   methods: {
     startTimer() {
       this.timerInterval = setInterval(() => {
@@ -80,6 +99,32 @@ export default {
         this.$store.commit("ADD_VOTE", 1);
       }
       this.isUserVote = true;
+      try {
+        this.writeContract();
+      } catch (e) {
+        console.error(e);
+      }
+    },
+    async writeContract() {
+      const config = await prepareWriteContract({
+        address: "0x3e75f922937F4DBD8c2dfBBC0B14e322391C6f11",
+        abi: bet3,
+        functionName: "finalizeBet",
+        args: [
+          this.$store.state.betCreatedContractResponse[0].args.betId,
+          this.$store.state.userChoice,
+        ],
+      });
+      const { hash } = await writeContract(config);
+      const wait = await waitForTransaction({
+        hash: hash,
+        onSettled(data, error) {
+          const response = data ? data.logs[0].count : [];
+          console.log("Settled", response);
+          console.log("Error", error);
+        },
+      });
+      console.log(wait);
     },
   },
   mounted() {
