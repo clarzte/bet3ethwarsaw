@@ -30,6 +30,7 @@ export default {
       ripple.addEventListener("animationend", () => {
         ripple.remove();
       });
+      this.$emit("click");
     },
   },
 };
