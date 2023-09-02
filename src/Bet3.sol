@@ -10,16 +10,37 @@ contract Bet3 {
         string optionB;
         uint betEntry; // amount of money to enter the bet
         uint betEndTime; // amount of time to place a bet - in seconds
-        address[] bettors;
+        address[] bettors; 
         uint finalizationTime; // time when the bet will be finalized - in seconds
         mapping(address => string) placedBets;
         mapping(string => uint) validationVotes; // track the votes for the winner option
         bool finalized;
     }
 
+    event BetCreated(
+        bytes32 indexed betId,
+        string title,
+        string optionA,
+        string optionB,
+        uint betEntry,
+        uint betEndTime,
+        uint finalizationTime
+    );
+
+    event BetPlaced(
+        bytes32 indexed betId,
+        address indexed bettor,
+        string option
+    );
+
+    event BetFinalized(
+        bytes32 indexed betId,
+        string winningOption
+    );
+
     mapping(bytes32 => Bet) public bets; // use keccak256 to create betId
 
-    uint constant autoFinalizePeriod = 24 hours;
+    uint public constant autoFinalizePeriod = 24 hours;
 
     function getBettors(bytes32 _betId) public view returns (address[] memory) {
         return bets[_betId].bettors;
@@ -51,6 +72,16 @@ contract Bet3 {
             _joinDuration +
             autoFinalizePeriod;
 
+        emit BetCreated(
+            betId,
+            _title,
+            _optionA,
+            _optionB,
+            _betEntry,
+            newBet.betEndTime,
+            newBet.finalizationTime
+        );
+
         return betId;
     }
 
@@ -63,16 +94,12 @@ contract Bet3 {
         // ensure that the bet has not been finalized already
         require(!bets[_betId].finalized, "Bet already finalized");
 
-        // calculate the number of bettors and the total pool
-        uint numbettors = bets[_betId].bettors.length;
-        uint totalPool = bets[_betId].betEntry * numbettors;
-
         // distribute the pool equally among all bettors
-        for (uint i = 0; i < numbettors; i++) {
-            payable(bets[_betId].bettors[i]).transfer(totalPool / numbettors);
+        for (uint i = 0; i < bets[_betId].bettors.length; i++) {
+            payable(bets[_betId].bettors[i]).transfer(bets[_betId].betEntry);
         }
 
-        bets[_betId].finalized = true;
+        setAsFinalized(_betId, "");
     }
 
     function placeBet(bytes32 _betId, string memory _option) external payable {
@@ -94,6 +121,8 @@ contract Bet3 {
 
         bets[_betId].placedBets[msg.sender] = _option;
         bets[_betId].bettors.push(msg.sender);
+
+        emit BetPlaced(_betId, msg.sender, _option);
     }
 
     function finalizeBet(
@@ -124,7 +153,6 @@ contract Bet3 {
         bytes32 _betId,
         string memory _winningOption
     ) private {
-        uint totalPool = bets[_betId].betEntry * bets[_betId].bettors.length;
         address[] memory winners = new address[](bets[_betId].bettors.length);
         uint winnersCount = 0;
 
@@ -142,14 +170,20 @@ contract Bet3 {
         }
 
         // distribute the prize among the winners
-        uint winnerShare = totalPool / winnersCount;
+        uint winnerShare = getTotalPrize(_betId) / winnersCount;
         for (uint i = 0; i < winners.length; i++) {
             if (winners[i] != address(0)) {
                 payable(winners[i]).transfer(winnerShare);
             }
         }
 
+        setAsFinalized(_betId, _winningOption);
+    }
+
+    function setAsFinalized(bytes32 _betId, string memory _winningOption) private {
         bets[_betId].finalized = true;
+
+        emit BetFinalized(_betId, _winningOption);
     }
 
     function compare(

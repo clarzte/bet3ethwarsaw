@@ -139,7 +139,11 @@ contract Bet3Test is Test {
         bet3.placeBet{value: 10 ether}(id, "France");
         vm.prank(bettor2);
         bet3.placeBet{value: 10 ether}(id, "Germany");
+
+        uint oldBalance = address(bettor2).balance;
+
         vm.warp(blockNum + 61 seconds);
+
         vm.prank(bettor1);
         bet3.finalizeBet(id, "Germany");
         vm.prank(bettor2);
@@ -147,7 +151,7 @@ contract Bet3Test is Test {
 
         (,,,,,,bool finalized) = bet3.bets(id);
 
-        assertEq(address(bettor2).balance, 40 ether);
+        assertEq(address(bettor2).balance, oldBalance + bet3.getTotalPrize(id));
         assertTrue(finalized);
     }
 
@@ -171,5 +175,43 @@ contract Bet3Test is Test {
         assertEq(totalPrize, 30 ether);
     }
 
-    //TODO: bet time ended
+    function test_distributeFundsIfNoConsensus() public startAt() {
+        bytes32 id = bet3.createBet(
+            "Who will win the match?",
+            "France",
+            "Germany",
+            10 * eth,
+            60
+        );
+
+        uint bettor1OldBalance = address(bettor1).balance;
+        uint bettor2OldBalance = address(bettor2).balance;
+
+        bet3.placeBet{value: 10 ether}(id, "France");
+        vm.prank(bettor1);
+        bet3.placeBet{value: 10 ether}(id, "France");
+        vm.prank(bettor2);
+        bet3.placeBet{value: 10 ether}(id, "Germany");
+        vm.warp(blockNum + 61 seconds + 24 hours);
+        bet3.distributeFundsIfNoConsensus(id);
+
+        (,,,,,,bool finalized) = bet3.bets(id);
+
+        assertEq(address(bettor1).balance, bettor1OldBalance);
+        assertEq(address(bettor2).balance, bettor2OldBalance);
+        assertTrue(finalized);
+    }
+
+    function test_distributeFundsIfNoConsensusErrror() public startAt() {
+        bytes32 id = bet3.createBet(
+            "Who will win the match?",
+            "France",
+            "Germany",
+            10 * eth,
+            60
+        );
+
+        vm.expectRevert("Finalization time not reached");
+        bet3.distributeFundsIfNoConsensus(id);
+    }
 }
