@@ -54,8 +54,9 @@ export default {
       if (!address) {
         return;
       }
-      console.log("Address: ", address);
-      this.$router.push("/dashboard");
+      if (this.$route.path !== "/dashboard") {
+        this.$router.push("/dashboard");
+      }
     });
   },
 };
