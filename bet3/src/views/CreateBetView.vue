@@ -34,6 +34,25 @@
           <span>Add bet option</span>
         </BaseBtn>
       </div>
+      <div class="bet-amount">
+        <span class="label">Bet Amount</span>
+        <div class="type-of-bet">
+          <div
+            class="fixed-bet"
+            :class="{ active: typeOfBet === 'fixed' }"
+            @click="typeOfBet = 'fixed'"
+          >
+            <span>Fixed</span>
+          </div>
+          <div
+            class="open-bet"
+            :class="{ active: typeOfBet === 'open' }"
+            @click="typeOfBet = 'open'"
+          >
+            <span>Open</span>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -53,6 +72,7 @@ export default {
       back: require("../assets/arrow-left.svg"),
       betName: "",
       betOptions: [],
+      typeOfBet: "fixed",
     };
   },
   methods: {
@@ -176,6 +196,51 @@ export default {
         margin-top: 12px;
         padding: 9px 32px;
         width: 100%;
+      }
+    }
+
+    .bet-amount {
+      align-items: center;
+      display: flex;
+      justify-content: space-between;
+      margin-top: 24px;
+
+      .label {
+        font-size: 10px;
+        font-style: normal;
+        font-weight: 600;
+        line-height: normal;
+        letter-spacing: -0.2px;
+        text-transform: uppercase;
+      }
+
+      .type-of-bet {
+        border: 1px solid #4b5565;
+        border-radius: 99px;
+        display: flex;
+        font-size: 14px;
+
+        .fixed-bet {
+          border-radius: 99px 0 0 99px;
+          color: white;
+          padding: 6px 24px;
+
+          &.active {
+            background: white;
+            color: black;
+          }
+        }
+
+        .open-bet {
+          border-radius: 0 99px 99px 0;
+          color: white;
+          padding: 6px 24px;
+
+          &.active {
+            background: white;
+            color: black;
+          }
+        }
       }
     }
   }
