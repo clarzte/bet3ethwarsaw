@@ -87,8 +87,13 @@
 import BaseBtn from "@/components/BaseBtn.vue";
 import TheHeader from "@/components/TheHeader.vue";
 import BetName from "@/components/BetName.vue";
-import { writeContract } from "@wagmi/core";
-import { readContract } from "@wagmi/core";
+import {
+  prepareWriteContract,
+  writeContract,
+  waitForTransaction,
+  watchContractEvent,
+} from "@wagmi/core";
+import { ethers } from "ethers";
 import bet3 from "@/abi/bet3.json";
 
 export default {
@@ -109,6 +114,16 @@ export default {
       },
     };
   },
+  created() {
+    watchContractEvent(
+      {
+        address: "0x3e75f922937F4DBD8c2dfBBC0B14e322391C6f11",
+        abi: bet3,
+        eventName: "BetCreated",
+      },
+      (data) => console.log(data)
+    );
+  },
   computed: {
     canCreateBet() {
       return (
@@ -126,20 +141,30 @@ export default {
       });
     },
     async writeContract() {
-      const { hash } = await writeContract({
-        abi: bet3,
-        address: "0x3e75f922937F4DBD8c2dfBBC0B14e322391C6f11",
-        functionName: "autoFinalizePeriod",
-      });
-      console.log("Hash: ", hash);
-    },
-    async readContract() {
-      const data = await readContract({
+      const amount = ethers.utils.parseEther(this.bet.amount).toString();
+      console.log(amount);
+      const config = await prepareWriteContract({
         address: "0x3e75f922937F4DBD8c2dfBBC0B14e322391C6f11",
         abi: bet3,
-        functionName: "autoFinalizePeriod",
+        functionName: "createBet",
+        args: [
+          this.bet.name,
+          this.bet.options[0].name,
+          this.bet.options[1].name,
+          amount,
+          this.bet.time * 60,
+        ],
       });
-      console.log("Data: ", data);
+      const { hash } = await writeContract(config);
+      const wait = await waitForTransaction({
+        hash: hash,
+        onSettled(data, error) {
+          const response = data ? data.logs[0].count : [];
+          console.log("Settled", response);
+          console.log("Error", error);
+        },
+      });
+      console.log(wait);
     },
     async createBet() {
       this.$store.commit("SET_BET", this.bet);

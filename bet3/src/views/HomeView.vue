@@ -23,7 +23,7 @@ import {
 } from "@web3modal/ethereum";
 import { Web3Modal } from "@web3modal/html";
 import { configureChains, createConfig, getAccount } from "@wagmi/core";
-// import { mantleTestnet } from "@wagmi/core/chains";
+import { mantleTestnet } from "@wagmi/core/chains";
 
 export default {
   name: "HomeView",
@@ -48,7 +48,7 @@ export default {
       },
       testnet: true,
     };
-    const chains = [buildBear];
+    const chains = [buildBear, mantleTestnet];
     const projectId = "745309525617c3053ad47f1817bef8a1";
     const { publicClient } = configureChains(chains, [
       w3mProvider({ projectId }),

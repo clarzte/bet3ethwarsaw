@@ -51,6 +51,33 @@ export default {
       this.$store.commit("SET_TOTAL_POOL", totalPool + +this.betAmount);
       this.$router.push(`/bet/${this.$route.params.id}/confirmed`);
     },
+    async writeContract() {
+      const amount = ethers.utils.parseEther(this.bet.amount).toString();
+      console.log(amount);
+      const config = await prepareWriteContract({
+        address: "0x3e75f922937F4DBD8c2dfBBC0B14e322391C6f11",
+        abi: bet3,
+        functionName: "placeBet",
+        args: [
+          this.bet.name,
+          this.bet.options[0].name,
+          this.bet.options[1].name,
+          amount,
+          this.bet.time * 60,
+        ],
+        value: amount,
+      });
+      const { hash } = await writeContract(config);
+      const wait = await waitForTransaction({
+        hash: hash,
+        onSettled(data, error) {
+          const response = data ? data.logs[0].count : [];
+          console.log("Settled", response);
+          console.log("Error", error);
+        },
+      });
+      console.log(wait);
+    }
   },
 };
 </script>
