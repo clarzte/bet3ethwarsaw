@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL
 pragma solidity ^0.8.0;
 
-import {Test, console2} from "forge-std/Test.sol";
+import {Test} from "forge-std/Test.sol";
 import {Bet3} from "../src/Bet3.sol";
 
 interface CheatCodes {
@@ -11,9 +11,10 @@ interface CheatCodes {
 contract Bet3Test is Test {
     Bet3 public bet3;
     address public owner;
-    address public better1;
-    address public better2;
+    address public bettor1;
+    address public bettor2;
     uint eth = 10**18;
+    uint blockNum = 1680616584;
 
 
     CheatCodes cheats = CheatCodes(HEVM_ADDRESS);
@@ -22,10 +23,15 @@ contract Bet3Test is Test {
         bet3 = new Bet3();
 
         owner = address(this);
-        better1 = cheats.addr(1);
-        vm.deal(better1, 20 ether);
-        better2 = cheats.addr(2);
-        vm.deal(better2, 20 ether);
+        bettor1 = cheats.addr(1);
+        vm.deal(bettor1, 20 ether);
+        bettor2 = cheats.addr(2);
+        vm.deal(bettor2, 20 ether);
+    }
+
+    modifier startAt() {
+        vm.warp(blockNum);
+        _;
     }
 
     function test_createBet() public {
@@ -35,12 +41,10 @@ contract Bet3Test is Test {
             "France",
             "Germany",
             1000,
-            60,
-            180,
-            360
+            60
         );
 
-        (string memory expectedTitle,,,,,,,) = bet3.bets(id);
+        (string memory expectedTitle,,,,,,) = bet3.bets(id);
 
         assertEq(expectedTitle, _title);
     }
@@ -51,21 +55,121 @@ contract Bet3Test is Test {
             "France",
             "Germany",
             10 * eth,
-            60,
-            180,
-            360
+            60
         );
 
         bet3.placeBet{value: 10 ether}(id, "France");
-        vm.prank(better1);
+        vm.prank(bettor1);
         bet3.placeBet{value: 10 ether}(id, "Germany");
-        vm.prank(better2);
+        vm.prank(bettor2);
         bet3.placeBet{value: 10 ether}(id, "Germany");
 
-        address[] memory betters = bet3.getBetters(id);
+        address[] memory betters = bet3.getBettors(id);
 
         assertEq(betters.length, 3);
     }
 
-    //TODO: bet time ended, incorrect bet amount, invalid option, already betted
+    function test_placeBetIncorrectBetEntry() public {
+        bytes32 id = bet3.createBet(
+            "Who will win the match?",
+            "France",
+            "Germany",
+            10 * eth,
+            60
+        );
+
+        vm.expectRevert("Incorrect bet amount");
+        bet3.placeBet{value: 9 ether}(id, "France");
+    }
+
+    function test_placeBetInvalidOption() public {
+        bytes32 id = bet3.createBet(
+            "Who will win the match?",
+            "France",
+            "Germany",
+            10 * eth,
+            60
+        );
+
+        vm.expectRevert("Invalid option");
+        bet3.placeBet{value: 10 ether}(id, "Spain");
+    }
+
+    function test_placeBetAlreadyBetted() public {
+        bytes32 id = bet3.createBet(
+            "Who will win the match?",
+            "France",
+            "Germany",
+            10 * eth,
+            60
+        );
+
+        bet3.placeBet{value: 10 ether}(id, "France");
+        vm.expectRevert("You already placed a bet");
+        bet3.placeBet{value: 10 ether}(id, "France");
+    }
+
+    function test_placeBetJoinEnded() public startAt {
+        bytes32 id = bet3.createBet(
+            "Who will win the match?",
+            "France",
+            "Germany",
+            10 * eth,
+            60
+        );
+
+        bet3.placeBet{value: 10 ether}(id, "France");
+        vm.warp(blockNum + 61 seconds);
+        vm.prank(bettor1);
+        vm.expectRevert("Betting time ended");
+        bet3.placeBet{value: 10 ether}(id, "Germany");
+    }
+
+    function test_distibuteFunds() public startAt {
+        bytes32 id = bet3.createBet(
+            "Who will win the match?",
+            "France",
+            "Germany",
+            10 * eth,
+            60
+        );
+
+        bet3.placeBet{value: 10 ether}(id, "France");
+        vm.prank(bettor1);
+        bet3.placeBet{value: 10 ether}(id, "France");
+        vm.prank(bettor2);
+        bet3.placeBet{value: 10 ether}(id, "Germany");
+        vm.warp(blockNum + 61 seconds);
+        vm.prank(bettor1);
+        bet3.finalizeBet(id, "Germany");
+        vm.prank(bettor2);
+        bet3.finalizeBet(id, "Germany");
+
+        (,,,,,,bool finalized) = bet3.bets(id);
+
+        assertEq(address(bettor2).balance, 40 ether);
+        assertTrue(finalized);
+    }
+
+    function test_getTotalPrize() public {
+        bytes32 id = bet3.createBet(
+            "Who will win the match?",
+            "France",
+            "Germany",
+            10 * eth,
+            60
+        );
+
+        bet3.placeBet{value: 10 ether}(id, "France");
+        vm.prank(bettor1);
+        bet3.placeBet{value: 10 ether}(id, "France");
+        vm.prank(bettor2);
+        bet3.placeBet{value: 10 ether}(id, "Germany");
+
+        uint totalPrize = bet3.getTotalPrize(id);
+
+        assertEq(totalPrize, 30 ether);
+    }
+
+    //TODO: bet time ended
 }
