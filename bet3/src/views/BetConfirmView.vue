@@ -59,7 +59,7 @@ export default {
     console.log(this.$store.state.bet.amount);
     watchContractEvent(
       {
-        address: "0x3e75f922937F4DBD8c2dfBBC0B14e322391C6f11",
+        address: "0x8F48AAac0F6fb31DC2e359471fC176c0C42DF305",
         abi: bet3,
         eventName: "BetPlaced",
       },
@@ -70,16 +70,16 @@ export default {
   },
   methods: {
     async confirm() {
-      const totalPool = this.$store.state.totalPool;
+      // const totalPool = this.$store.state.totalPool;
       await this.writeContract();
-      this.$store.commit("SET_TOTAL_POOL", totalPool + this.betAmount);
+      // this.$store.commit("SET_TOTAL_POOL", totalPool + this.betAmount);
       await this.$router.push(`/bet/${this.$route.params.id}/confirmed`);
     },
     async writeContract() {
       const amount = this.$store.state.bet.amount.toString();
       console.log(amount);
       const config = await prepareWriteContract({
-        address: "0x3e75f922937F4DBD8c2dfBBC0B14e322391C6f11",
+        address: "0x8F48AAac0F6fb31DC2e359471fC176c0C42DF305",
         abi: bet3,
         functionName: "placeBet",
         args: [

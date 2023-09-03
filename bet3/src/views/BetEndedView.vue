@@ -65,13 +65,13 @@ export default {
   },
   computed: {
     numberOfVotes() {
-      return this.option1Votes + this.option2Votes;
+      return this.option1Votes + this.option2Votes ?? 0;
     },
   },
   created() {
     watchContractEvent(
       {
-        address: "0x3e75f922937F4DBD8c2dfBBC0B14e322391C6f11",
+        address: "0x8F48AAac0F6fb31DC2e359471fC176c0C42DF305",
         abi: bet3,
         eventName: "BetFinalized",
       },
@@ -107,7 +107,7 @@ export default {
     },
     async writeContract() {
       const config = await prepareWriteContract({
-        address: "0x3e75f922937F4DBD8c2dfBBC0B14e322391C6f11",
+        address: "0x8F48AAac0F6fb31DC2e359471fC176c0C42DF305",
         abi: bet3,
         functionName: "finalizeBet",
         args: [

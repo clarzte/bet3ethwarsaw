@@ -117,7 +117,7 @@ export default {
   created() {
     watchContractEvent(
       {
-        address: "0x3e75f922937F4DBD8c2dfBBC0B14e322391C6f11",
+        address: "0x8F48AAac0F6fb31DC2e359471fC176c0C42DF305",
         abi: bet3,
         eventName: "BetCreated",
       },
@@ -147,7 +147,7 @@ export default {
       const amount = ethers.utils.parseEther(this.bet.amount).toString();
       console.log(amount);
       const config = await prepareWriteContract({
-        address: "0x3e75f922937F4DBD8c2dfBBC0B14e322391C6f11",
+        address: "0x8F48AAac0F6fb31DC2e359471fC176c0C42DF305",
         abi: bet3,
         functionName: "createBet",
         args: [

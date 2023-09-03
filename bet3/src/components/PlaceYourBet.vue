@@ -1,5 +1,5 @@
 <template>
-  <div v-if="init" class="place-your-bet">
+  <div class="place-your-bet">
     <span class="text"> Place your bet </span>
     <div class="buttons-container">
       <BaseBtn class="btn primary-btn" @click="chooseOption(option1)">
@@ -23,25 +23,16 @@ export default {
   components: {
     BaseBtn,
   },
-  props: {},
-  data() {
-    return {
-      init: false,
-      option1: "",
-      option2: "",
-    };
-  },
-  watch: {
-    bet() {
-      this.init = true;
-      this.option1 = this.bet.options[0].name;
-      this.option2 = this.bet.options[1].name;
-    },
-  },
   computed: {
     ...mapState({
       bet: (state) => state.bet,
     }),
+    option1() {
+      return this.bet.options[0].name;
+    },
+    option2() {
+      return this.bet.options[1].name;
+    },
   },
   methods: {
     chooseOption(option) {

@@ -13,6 +13,8 @@ export default new Vuex.Store({
       time: "",
       type: "",
       finalizationTime: "",
+      totalPrize: "",
+      betId: "",
     },
     userChoice: "",
     totalPool: 0,

@@ -24,7 +24,7 @@
     <div class="footer">
       <div class="buttons-container">
         <BaseBtn class="invite-friends">Invite friends</BaseBtn>
-        <BaseBtn class="skip" @click="$router.push('/bet/1')">
+        <BaseBtn class="skip" @click="$router.push(`/bet/${betId}`)">
           Skip this step
         </BaseBtn>
       </div>
@@ -36,6 +36,7 @@
 import TheHeader from "@/components/TheHeader.vue";
 import BetName from "@/components/BetName.vue";
 import BaseBtn from "@/components/BaseBtn.vue";
+import { mapState } from "vuex";
 export default {
   name: "BetCreatedView",
   components: {
@@ -47,6 +48,14 @@ export default {
     return {
       betName: this.$store.state.bet.name,
     };
+  },
+  computed: {
+    ...mapState({
+      betCreatedContractResponse: (state) => state.betCreatedContractResponse,
+    }),
+    betId() {
+      return this.betCreatedContractResponse[0].args.betId;
+    },
   },
 };
 </script>
