@@ -49,7 +49,7 @@ contract Bet3 {
     mapping(bytes32 => Bet) public bets; // use keccak256 to create betId
     bytes32[] public betIds;
 
-    uint public constant autoFinalizePeriod = 2 minutes;// should be 24 hours but for the purpose of hackathon we stick to 2 minutes
+    uint public constant autoFinalizePeriod = 2 minutes; // should be 24 hours but for the purpose of hackathon we stick to 2 minutes
 
     function getBettors(bytes32 _betId) public view returns (address[] memory) {
         return bets[_betId].bettors;
@@ -183,39 +183,34 @@ contract Bet3 {
             bets[_betId].validationVotes[_winningOption] >
             (bets[_betId].bettors.length / 2)
         ) {
-            distributeFunds(_betId, _winningOption);
-        }
-    }
+            address[] memory winners = new address[](
+                bets[_betId].bettors.length
+            );
+            uint winnersCount = 0;
 
-    function distributeFunds(
-        bytes32 _betId,
-        string memory _winningOption
-    ) private {
-        address[] memory winners = new address[](bets[_betId].bettors.length);
-        uint winnersCount = 0;
-
-        // count the number of winners
-        for (uint i = 0; i < bets[_betId].bettors.length; i++) {
-            if (
-                compare(
-                    bets[_betId].placedBets[bets[_betId].bettors[i]],
-                    _winningOption
-                )
-            ) {
-                winners[i] = bets[_betId].bettors[i];
-                winnersCount++;
+            // count the number of winners
+            for (uint i = 0; i < bets[_betId].bettors.length; i++) {
+                if (
+                    compare(
+                        bets[_betId].placedBets[bets[_betId].bettors[i]],
+                        _winningOption
+                    )
+                ) {
+                    winners[i] = bets[_betId].bettors[i];
+                    winnersCount++;
+                }
             }
-        }
 
-        // distribute the prize among the winners
-        uint winnerShare = getTotalPrize(_betId) / winnersCount;
-        for (uint i = 0; i < winners.length; i++) {
-            if (winners[i] != address(0)) {
-                payable(winners[i]).transfer(winnerShare);
+            // distribute the prize among the winners
+            uint winnerShare = getTotalPrize(_betId) / winnersCount;
+            for (uint i = 0; i < winners.length; i++) {
+                if (winners[i] != address(0)) {
+                    payable(winners[i]).transfer(winnerShare);
+                }
             }
-        }
 
-        setAsFinalized(_betId, _winningOption);
+            setAsFinalized(_betId, _winningOption);
+        }
     }
 
     function setAsFinalized(
