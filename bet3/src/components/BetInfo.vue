@@ -7,8 +7,10 @@
       <div class="bet-name">{{ betName }}</div>
       <div class="bet-time">
         <inline-svg :src="require('../assets/clock.svg')" />
-        {{ betTime }}
-        mins to finish
+        <slot>
+          {{ betTime }}
+          mins to finish
+        </slot>
       </div>
     </div>
   </div>
@@ -16,14 +18,21 @@
 
 <script>
 import InlineSvg from "vue-inline-svg";
+import { mapState } from "vuex";
+import { ethers } from "ethers";
 
 export default {
   components: { InlineSvg },
-  data() {
-    return {
-      betName: this.$store.state.bet.name,
-      betTime: this.$store.state.bet.time,
-    };
+  computed: {
+    ...mapState({
+      bet: (state) => state.bet,
+    }),
+    betName() {
+      return this.bet.name;
+    },
+    betTime() {
+      return parseInt(ethers.utils.formatEther(this.bet.time));
+    },
   },
 };
 </script>

@@ -7,19 +7,31 @@
       <slot name="amount" />
       <div class="currency">MNT</div>
     </div>
-    <div v-if="showTypeOfBet" class="type-of-bet">Fixed Bet 450 MNT</div>
+    <div v-if="showTypeOfBet" class="type-of-bet">
+      Fixed Bet {{ betAmount }} MNT
+    </div>
     <slot name="additional-info" />
   </div>
 </template>
 
 <script>
+import { mapState } from "vuex";
+
 export default {
   name: "PrizePool",
   props: {
     showTypeOfBet: { type: Boolean, default: true },
   },
   data() {
-    return {};
+    return {
+      init: false,
+      betAmount: null,
+    };
+  },
+  computed: {
+    ...mapState({
+      bet: (state) => state.bet,
+    }),
   },
 };
 </script>

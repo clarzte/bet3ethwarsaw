@@ -36,13 +36,21 @@ export default {
   data() {
     return {
       betAmount: this.$store.state.bet.amount,
+      betEnded: false,
       totalPool: this.$store.state.totalPool,
       userChoice: this.$store.state.userChoice,
     };
   },
-  methods: {},
-  computed: {},
-  mounted() {},
+  watch: {
+    betEnded() {
+      this.$router.push(`/bet/${this.$route.params.id}/ended`);
+    },
+  },
+  created() {
+    setTimeout(() => {
+      this.betEnded = true;
+    }, 5000);
+  },
 };
 </script>
 

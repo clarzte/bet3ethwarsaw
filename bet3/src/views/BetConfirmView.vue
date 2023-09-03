@@ -31,6 +31,14 @@
 import BaseBtn from "@/components/BaseBtn.vue";
 import TheHeader from "@/components/TheHeader.vue";
 import PrizePool from "@/components/PrizePool.vue";
+import bet3 from "@/abi/bet3.json";
+import { ethers } from "ethers";
+import {
+  writeContract,
+  waitForTransaction,
+  prepareWriteContract,
+  watchContractEvent,
+} from "@wagmi/core";
 export default {
   name: "BetConfirmView",
   components: {
@@ -41,15 +49,56 @@ export default {
   props: {},
   data() {
     return {
-      betAmount: this.$store.state.bet.amount,
+      betAmount: parseInt(
+        ethers.utils.formatEther(this.$store.state.bet.amount)
+      ),
       userChoice: this.$store.state.userChoice,
     };
   },
+  created() {
+    console.log(this.$store.state.bet.amount);
+    watchContractEvent(
+      {
+        address: "0x8F48AAac0F6fb31DC2e359471fC176c0C42DF305",
+        abi: bet3,
+        eventName: "BetPlaced",
+      },
+      (data) => {
+        this.$store.commit("SET_BET_PLACED_CONTRACT_RESPONSE", data);
+      }
+    );
+  },
   methods: {
-    confirm() {
-      const totalPool = +this.$store.state.totalPool;
-      this.$store.commit("SET_TOTAL_POOL", totalPool + +this.betAmount);
-      this.$router.push(`/bet/${this.$route.params.id}/confirmed`);
+    async confirm() {
+      // const totalPool = this.$store.state.totalPool;
+      await this.writeContract();
+      // this.$store.commit("SET_TOTAL_POOL", totalPool + this.betAmount);
+      await this.$router.push(`/bet/${this.$route.params.id}/confirmed`);
+    },
+    async writeContract() {
+      const amount = this.$store.state.bet.amount.toString();
+      console.log(amount);
+      const config = await prepareWriteContract({
+        address: "0x8F48AAac0F6fb31DC2e359471fC176c0C42DF305",
+        abi: bet3,
+        functionName: "placeBet",
+        args: [
+          this.$route.params.id ||
+            this.$store.state.betCreatedContractResponse[0].args.betId,
+          this.$store.state.userChoice,
+        ],
+        value: amount,
+      });
+      const { hash } = await writeContract(config);
+      const wait = await waitForTransaction({
+        hash: hash,
+        onSettled(data, error) {
+          const response = data ? data.logs[0].count : [];
+          console.log("Settled", response);
+          console.log("Error", error);
+        },
+      });
+      console.log(wait);
     },
   },
 };

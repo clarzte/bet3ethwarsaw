@@ -1,5 +1,5 @@
 <template>
-  <div id="bet-details-view">
+  <div v-if="bet" id="bet-details-view">
     <the-header>
       <template #right>
         <div class="header-right">
@@ -26,6 +26,10 @@ import InlineSvg from "vue-inline-svg";
 import PrizePool from "@/components/PrizePool.vue";
 import PlaceYourBet from "@/components/PlaceYourBet.vue";
 import BetInfo from "@/components/BetInfo.vue";
+import { readContract } from "@wagmi/core";
+import bet3 from "@/abi/bet3.json";
+import { ethers } from "ethers";
+import { mapState } from "vuex";
 export default {
   name: "BetDetailView",
   components: {
@@ -35,13 +39,56 @@ export default {
     InlineSvg,
     PlaceYourBet,
   },
-  props: {},
   data() {
     return {
+      bet: null,
       betName: this.$store.state.bet.name,
       betTime: this.$store.state.bet.time,
       totalPool: this.$store.state.totalPool,
     };
+  },
+  computed: {
+    ...mapState({
+      bets: (state) => state.bets,
+    }),
+  },
+  async created() {
+    const newBet = this.bets.find((bet) => bet.betId === this.$route.params.id);
+    console.log(newBet);
+    const bet = await readContract({
+      address: "0x8F48AAac0F6fb31DC2e359471fC176c0C42DF305",
+      abi: bet3,
+      functionName: "bets",
+      args: [this.$route.params.id],
+    });
+    const betObject = {
+      name: bet[0],
+      options: [
+        {
+          name: bet[1],
+          votes: 0,
+        },
+        {
+          name: bet[2],
+          votes: 0,
+        },
+      ],
+      amount: bet[3],
+      time: bet[4],
+      finalizationTime: bet[5],
+    };
+    this.bet = betObject;
+    this.$store.commit("SET_BET", betObject);
+    // this.$store.commit("SET_BET", newBet);
+    this.betName = bet[0];
+    const totalPool = await readContract({
+      address: "0x8F48AAac0F6fb31DC2e359471fC176c0C42DF305",
+      abi: bet3,
+      functionName: "getTotalPrize",
+      args: [this.$route.params.id],
+    });
+    this.totalPool = parseInt(ethers.utils.formatEther(totalPool));
+    this.$store.commit("SET_TOTAL_POOL", totalPool);
   },
 };
 </script>
