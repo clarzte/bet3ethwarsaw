@@ -29,6 +29,8 @@ import InlineSvg from "vue-inline-svg";
 import TheHeader from "@/components/TheHeader.vue";
 import BetInfo from "@/components/BetInfo.vue";
 import PrizePool from "@/components/PrizePool.vue";
+import { readContract } from "@wagmi/core";
+import bet3 from "@/abi/bet3.json";
 
 export default {
   name: "BetConfirmedView",
@@ -37,7 +39,7 @@ export default {
     return {
       betAmount: this.$store.state.bet.amount,
       betEnded: false,
-      totalPool: this.$store.state.totalPool,
+      totalPool: 0,
       userChoice: this.$store.state.userChoice,
     };
   },
@@ -46,7 +48,13 @@ export default {
       this.$router.push(`/bet/${this.$route.params.id}/ended`);
     },
   },
-  created() {
+  async created() {
+    this.totalPool = await readContract({
+      address: "0x6Be57E047566598e263AFf571B51DD7b3Fa3493a",
+      abi: bet3,
+      functionName: "getTotalPrize",
+      args: [this.$route.params.id],
+    });
     setTimeout(() => {
       this.betEnded = true;
     }, 5000);

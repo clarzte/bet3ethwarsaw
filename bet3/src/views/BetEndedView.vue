@@ -71,7 +71,7 @@ export default {
   created() {
     watchContractEvent(
       {
-        address: "0x8F48AAac0F6fb31DC2e359471fC176c0C42DF305",
+        address: "0x6Be57E047566598e263AFf571B51DD7b3Fa3493a",
         abi: bet3,
         eventName: "BetFinalized",
       },
@@ -107,11 +107,12 @@ export default {
     },
     async writeContract() {
       const config = await prepareWriteContract({
-        address: "0x8F48AAac0F6fb31DC2e359471fC176c0C42DF305",
+        address: "0x6Be57E047566598e263AFf571B51DD7b3Fa3493a",
         abi: bet3,
         functionName: "finalizeBet",
         args: [
-          this.$store.state.betCreatedContractResponse[0].args.betId,
+          this.$route.params.id ??
+            this.$store.state.betCreatedContractResponse[0].args.betId,
           this.$store.state.userChoice,
         ],
       });

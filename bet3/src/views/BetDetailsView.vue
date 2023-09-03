@@ -56,7 +56,7 @@ export default {
     const newBet = this.bets.find((bet) => bet.betId === this.$route.params.id);
     console.log(newBet);
     const bet = await readContract({
-      address: "0x8F48AAac0F6fb31DC2e359471fC176c0C42DF305",
+      address: "0x6Be57E047566598e263AFf571B51DD7b3Fa3493a",
       abi: bet3,
       functionName: "bets",
       args: [this.$route.params.id],
@@ -82,7 +82,7 @@ export default {
     // this.$store.commit("SET_BET", newBet);
     this.betName = bet[0];
     const totalPool = await readContract({
-      address: "0x8F48AAac0F6fb31DC2e359471fC176c0C42DF305",
+      address: "0x6Be57E047566598e263AFf571B51DD7b3Fa3493a",
       abi: bet3,
       functionName: "getTotalPrize",
       args: [this.$route.params.id],

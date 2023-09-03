@@ -59,7 +59,7 @@ export default {
     console.log(this.$store.state.bet.amount);
     watchContractEvent(
       {
-        address: "0x8F48AAac0F6fb31DC2e359471fC176c0C42DF305",
+        address: "0x6Be57E047566598e263AFf571B51DD7b3Fa3493a",
         abi: bet3,
         eventName: "BetPlaced",
       },
@@ -79,7 +79,7 @@ export default {
       const amount = this.$store.state.bet.amount.toString();
       console.log(amount);
       const config = await prepareWriteContract({
-        address: "0x8F48AAac0F6fb31DC2e359471fC176c0C42DF305",
+        address: "0x6Be57E047566598e263AFf571B51DD7b3Fa3493a",
         abi: bet3,
         functionName: "placeBet",
         args: [
