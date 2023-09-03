@@ -8,11 +8,24 @@ contract Bet3 {
         string optionB;
         uint betEntry; // amount of money to enter the bet
         uint betEndTime; // amount of time to place a bet - in seconds
-        address[] bettors; 
+        address[] bettors;
         uint finalizationTime; // time when the bet will be finalized - in seconds
         mapping(address => string) placedBets;
         mapping(string => uint) validationVotes; // track the votes for the winner option
         bool finalized;
+    }
+
+    struct MinifiedBet {
+        bytes32 betId;
+        string title;
+        string optionA;
+        string optionB;
+        uint betEntry;
+        uint betEndTime;
+        uint finalizationTime;
+        bool finalized;
+        uint bettorsCount;
+        uint totalPrize;
     }
 
     event BetCreated(
@@ -31,14 +44,12 @@ contract Bet3 {
         string option
     );
 
-    event BetFinalized(
-        bytes32 indexed betId,
-        string winningOption
-    );
+    event BetFinalized(bytes32 indexed betId, string winningOption);
 
     mapping(bytes32 => Bet) public bets; // use keccak256 to create betId
+    bytes32[] public betIds;
 
-    uint public constant autoFinalizePeriod = 24 hours;
+    uint public constant autoFinalizePeriod = 2 minutes;// should be 24 hours but for the purpose of hackathon we stick to 2 minutes
 
     function getBettors(bytes32 _betId) public view returns (address[] memory) {
         return bets[_betId].bettors;
@@ -46,6 +57,33 @@ contract Bet3 {
 
     function getTotalPrize(bytes32 _betId) public view returns (uint) {
         return bets[_betId].bettors.length * bets[_betId].betEntry;
+    }
+
+    function getAllBets(
+        bool _finalized
+    ) public view returns (MinifiedBet[] memory) {
+        MinifiedBet[] memory minifiedBets = new MinifiedBet[](betIds.length);
+        uint minifiedBetsCount = 0;
+
+        for (uint i = 0; i < betIds.length; i++) {
+            if (bets[betIds[i]].finalized == _finalized) {
+                minifiedBets[minifiedBetsCount] = MinifiedBet(
+                    betIds[i],
+                    bets[betIds[i]].title,
+                    bets[betIds[i]].optionA,
+                    bets[betIds[i]].optionB,
+                    bets[betIds[i]].betEntry,
+                    bets[betIds[i]].betEndTime,
+                    bets[betIds[i]].finalizationTime,
+                    bets[betIds[i]].finalized,
+                    bets[betIds[i]].bettors.length,
+                    getTotalPrize(betIds[i])
+                );
+                minifiedBetsCount++;
+            }
+        }
+
+        return minifiedBets;
     }
 
     function createBet(
@@ -69,6 +107,8 @@ contract Bet3 {
             block.timestamp +
             _joinDuration +
             autoFinalizePeriod;
+
+        betIds.push(betId);
 
         emit BetCreated(
             betId,
@@ -178,7 +218,10 @@ contract Bet3 {
         setAsFinalized(_betId, _winningOption);
     }
 
-    function setAsFinalized(bytes32 _betId, string memory _winningOption) private {
+    function setAsFinalized(
+        bytes32 _betId,
+        string memory _winningOption
+    ) private {
         bets[_betId].finalized = true;
 
         emit BetFinalized(_betId, _winningOption);
